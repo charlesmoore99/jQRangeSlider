@@ -44,6 +44,7 @@
 		changing: {min:false, max:false},
 		changed: {min:false, max:false},
 		ruler: null,
+		markers: null,
 
 		_create: function(){
 			this._setDefaultValues();
@@ -98,6 +99,7 @@
 			this._setRangeOption(key, value);
 			this._setStepOption(key, value);
 			this._setScalesOption(key, value);
+			this._setMarkersOption(key, value);
 			this._setEnabledOption(key, value);
 			this._setPositionningOption(key, value);
 		},
@@ -127,6 +129,18 @@
 				}else if (value instanceof Array){
 					this.options.scales = value;
 					this._updateRuler();
+				}
+			}
+		},
+
+		_setMarkersOption: function(key, value){
+			if (key === "markers"){
+				if (value === false || value === null){
+					this.options.scales = false;
+					this._destroyMarkers();
+				}else if (value instanceof Array){
+					this.options.markers = value;
+					this._updateMarkers();
 				}
 			}
 		},
@@ -258,6 +272,7 @@
 			}
 
 			this._updateRuler();
+			this._updateMarkers();
 
 			if (!this.options.enabled) this._toggle(this.options.enabled);
 		},
@@ -616,6 +631,10 @@
 			this.ruler = $("<div class='ui-rangeSlider-ruler' />").appendTo(this.innerBar);
 		},
 
+		_createMarkers: function(){
+			this.markers = $("<div class='ui-rangeSlider-markers' />").appendTo(this.innerBar);
+		},
+
 		_setRulerParameters: function(){
 			this.ruler.ruler({
 				min: this.options.bounds.min,
@@ -624,11 +643,27 @@
 			});
 		},
 
+		_setMarkersParameters: function(){
+			this.ruler.ruler({
+				min: this.options.bounds.min,
+				max: this.options.bounds.max,
+				markers: this.options.scales
+			});
+		},
+
 		_destroyRuler: function(){
 			if (this.ruler !== null && $.fn.ruler){
 				this.ruler.ruler("destroy");
 				this.ruler.remove();
 				this.ruler = null;
+			}
+		},
+
+		_destroyMarkers: function(){
+			if (this.markers !== null && $.fn.markers){
+				this.markers.markers("destroy");
+				this.markers.remove();
+				this.markers = null;
 			}
 		},
 
@@ -641,6 +676,17 @@
 
 			this._createRuler();
 			this._setRulerParameters();			
+		},
+
+		_updateMarkers: function(){
+			this._destroyMarkers();
+
+			if (this.options.markers === false || !$.fn.markers){
+				return;
+			}
+
+			this._createMarkers();
+			this._setMarkersParameters();			
 		},
 
 		/*
@@ -797,6 +843,7 @@
 
 			this._destroyRuler();
 			this._destroyLabels();
+			this._destroyMarkers();
 		},
 
 		_destroyElements: function(){

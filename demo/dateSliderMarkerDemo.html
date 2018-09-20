@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Date Range Slider</title>
+<link rel="stylesheet" href="js/jQRangeSlider-5.7.2/css/iThing.css" type="text/css" />
+<link rel="stylesheet" href="js/jQRangeSlider-5.7.2/css/marker.css" type="text/css" />
+
+<style>
+.selected {
+	font-weight : bold;
+}
+</style>
+
+</head>
+<body>
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQRangeSliderMouseTouch.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQRangeSliderDraggable.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQRangeSliderHandle.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQRangeSliderBar.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQRangeSliderLabel.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQRangeSlider.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQDateRangeSliderHandle.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQDateRangeSlider.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQRuler.js"></script>
+	<script src="js/jQRangeSlider-5.7.2/src/jQMarkers.js"></script>
+	<script src="js/moment.js"></script>
+	<script>
+	
+	$( document ).ready(function() {
+
+		// create a couple observation marks 
+		var markers = [{
+			id : "OneA1",
+			datetime : moment([2012, 0, 15, 3]).utc(),
+			iconClass : "sensor" 
+		},{
+			id : "OneA2",
+			datetime : moment([2012, 0, 15, 5]).utc(),
+			iconClass : "sensor" 
+		},{
+			id : "OneA3",
+			datetime : moment([2012, 0, 15, 18]).utc(),
+			iconClass : "sensor" 
+		}];
+		
+		var markers2 = [{
+			id : "OneB1",
+			datetime : moment([2012, 0, 15, 3]).utc(),
+			iconClass : "sensor" 
+		},{
+			id : "OneB2",
+			datetime : moment([2012, 0, 15, 5]).utc(),
+			iconClass : "sensor" 
+		},{
+			id : "OneB3",
+			datetime : moment([2012, 0, 15, 18]).utc(),
+			iconClass : "sensor" 
+		}];
+		
+		var moreMarkers = [{
+			id : "Two",
+			datetime : moment([2012, 0, 25]).utc(),
+			iconClass : "sensor" 
+		},{
+			id : "Three",
+			datetime : moment([2012, 3, 15]).utc(),
+			iconClass : "sensor" 			
+		},{
+			id :"Four",
+			datetime : moment([2012, 3, 20]).utc(),
+			iconClass : "sensor" 			
+		},{
+			id : "Five",
+			datetime : moment([2012, 3, 30]).utc(),
+			iconClass : "sensor" 			
+		},{
+			id : "Six",
+			datetime : moment([2012, 4, 1]).utc(),
+			iconClass : "sensor" 			
+		},{
+			id : "Seven",
+			datetime : moment([2012, 4, 15]).utc(),
+			iconClass : "sensor"
+		},{
+			id : "Eight",
+			datetime : moment([2013, 4, 16]).utc(),
+			iconClass : "sensor" 
+		},{
+			id : "Nine",
+			datetime : moment([2013, 5, 17]).utc(),
+			iconClass : "sensor" 
+		},{
+			id : "Ten",
+			datetime : moment([2013, 6, 18]).utc(),
+			iconClass : "sensor" 			
+		},{
+			id :"Eleven",
+			datetime : moment([2014, 4, 19]).utc(),
+			iconClass : "sensor" 			
+		},{
+			id : "Twelve",
+			datetime : moment([2015, 4, 20]).utc(),
+			iconClass : "sensor" 			
+		},{
+			id : "Thirteen",
+			datetime : moment([2016, 4, 21]).utc(),
+			iconClass : "sensor" 			
+		},{
+			id : "Fourteen",
+			datetime : moment([2022, 4, 22]).utc(),
+			iconClass : "sensor" 			
+		}];
+		
+	    var calcBounds = function () {
+		    // calculate the min and max dates and add 10% to both ends
+		    var dts = markers.map(d => d.datetime);
+		    var maxdate = moment(moment.max(dts)).utc();
+		    var mindate = moment(moment.min(dts)).utc();
+		    var elapsed = maxdate - mindate;
+		    var buffer = moment.duration(elapsed * 0.05).asMilliseconds();
+		    maxdate.add(buffer);
+		    mindate.subtract(buffer);
+		    // figure out the granularity
+		    var hhh = maxdate.diff(mindate, 'hours');
+		    var ddd = maxdate.diff(mindate, 'days');
+		    var mmm = maxdate.diff(mindate, 'months');
+		    var yyy = maxdate.diff(mindate, 'years');
+		    
+		    var tics = [];
+		    var labs = [];
+		    var gran = 'hours';
+ 		    if (yyy > 1) {
+		    	gran = 'years';
+		    	var c = moment(mindate.startOf(gran)).utc();
+		    	while ( c <= maxdate.startOf(gran)) {
+			    	tics.push(moment(c.startOf(gran)).utc());
+			    	labs.push(c.utc().format("YYYY"));
+		    		c.utc().add(1, gran); 
+		    	}
+		    	tics.push(moment(c.startOf(gran)).utc());
+		    	labs.push(c.format("YYYY"));
+		    } else if (mmm > 1) {
+		    	gran = 'months';
+		    	var c = moment(mindate.startOf(gran)).utc();
+		    	while ( c <= maxdate.startOf(gran)) {
+			    	tics.push(moment(c.startOf(gran)).utc());
+			    	labs.push(c.utc().format("MMM/YY"));
+		    		c.add(1, gran); 
+		    	}
+		    	tics.push(moment(c.startOf(gran)).utc());
+		    	labs.push(c.utc().format("MMM/YY"));
+		    } else if (ddd > 2) {
+		    	gran = 'days';
+		    	var c = moment(mindate.startOf(gran)).utc();
+		    	while ( c <= maxdate.startOf(gran)) {
+			    	tics.push(moment(c.startOf(gran)).utc());
+			    	labs.push(c.utc().format("DD MMM"));
+		    		c.add(1, gran); 
+		    	}
+		    	tics.push(moment(c.startOf(gran)).utc());
+		    	labs.push(c.utc().format("DD MMM"));
+		    } else {
+		    	gran = 'hours';
+		    	var c = moment(mindate.startOf(gran)).utc();
+		    	while ( c <= maxdate.startOf(gran)) {
+			    	tics.push(moment(c.startOf(gran)).utc());
+			    	labs.push(c.utc().format("HH:00"));
+		    		c.add(1, gran); 
+		    	}		    	
+		    	tics.push(moment(c.startOf(gran)).utc());
+		    	labs.push(c.utc().format("HH:00"));
+		    }
+		    
+		    // create arrays of tic marks and labels
+		    return {
+		    	max : maxdate.endOf(gran),
+		    	min : mindate.startOf(gran),
+		    	tics : tics,
+		    	labs : labs
+		    };
+	    }
+	    
+	    var bounds = calcBounds();
+		var ticIndex = 0; 
+		var labIndex = 0;
+	    $("#slider").dateRangeSlider({
+			scales: [{
+				next: function(val){
+					if (ticIndex >= bounds.tics.length) {
+						ticIndex = 0;
+						labIndex = 0;
+					}
+					var d = bounds.tics[++ticIndex];
+					if (typeof d === 'undefined') {
+						return new Date();
+					} else {
+						return d.toDate();							
+					}
+				},
+				label: function(val){
+					if (labIndex >= bounds.labs.length) {
+						labIndex = 0;
+					}
+					return bounds.labs[labIndex++];
+				}
+			}],
+			markers: markers,
+			bounds: {
+				min: bounds.min.toDate(),
+				max: bounds.max.toDate()
+			},
+			defaultValues: {
+				min: bounds.min.toDate(),
+				max: bounds.max.toDate()
+			}
+		});
+
+		
+	    $("#slider").on("valuesChanging", function(e, data){
+			$.each(markers, function(index,value){
+				
+				var iii  = "marker-" + value.id; 
+				if ((value.datetime >= data.values.min) && (value.datetime <= data.values.max)) {
+					$("#" + iii).addClass("selected")
+				} else {					
+					$("#" + iii).removeClass("selected")
+				}
+			});			
+		});
+		
+		var redrawMarkers = function(){
+
+		    bounds = calcBounds();
+
+			var ticIndex = 0;
+			var labIndex = 0;
+		    
+			$("#slider").dateRangeSlider(
+				"option","bounds", {
+					min: bounds.min.toDate(),
+					max: bounds.max.toDate()
+	    		}
+			);
+
+		    $("#slider").dateRangeSlider(
+		    		  "option",
+		    		  "markers",
+		    		  markers
+			);
+		    
+		    $("#slider").dateRangeSlider(
+		    		  "option",
+		    		  "scales",
+		  			[{
+						next: function(val){
+							if (ticIndex >= bounds.tics.length) {
+								ticIndex = 0;
+								labIndex = 0;
+							}
+							var d = bounds.tics[++ticIndex];
+							if (typeof d === 'undefined') {
+								return new Date();
+							} else {
+								return d.toDate();							
+							}
+						},
+						label: function(val){
+							if (labIndex >= bounds.labs.length) {
+								labIndex = 0;
+							}
+							return bounds.labs[labIndex++];
+						}
+					}],
+			);
+		    
+		    
+			$('#markers').empty();
+			$.each(markers, function(i, v){
+				var i = 'marker-' + v.id;
+				var d = v.datetime.utc().format();
+				var ns = `<div id='${i}' class='marker'><span class='markerId'>${i}</span>:::<span class='markerDate'>${d}</span></div>`;
+				var n = $(ns);
+				
+				$('#markers').append(n)
+			});
+		}
+		var addindex = 0;
+		$('#addEvent').click(function (obj){
+			if (addindex >= moreMarkers.length) {
+				console.log("max reached")
+				return;			
+			}
+			console.log("Adding Marker " + addindex + "  of " + moreMarkers.length)
+			var curBounds = $("#slider").dateRangeSlider("values"); 
+			markers.push(moreMarkers[addindex]);
+			addindex+=1;
+			
+			var newBounds = calcBounds(); 
+			redrawMarkers();
+		});
+		
+		redrawMarkers();
+	});
+	</script>
+
+
+
+
+	<h1>Date Range Slider</h1>
+	<div id="sliderContainer" style="width:80%; margin-left:10%">
+		<div id="slider"></div>
+	</div>
+	<div id="sliderContainer" style="width:80%; margin-left:10%">
+		<div id="slider2"></div>
+	</div>
+	<hr>
+	<h3>Controls</h3>
+	<div id="controls">
+		<button type="button" id="addEvent">Add An Event</button>
+	</div>
+	
+	<hr>
+	<h3>Markers</h3>
+	<div id="markers"></div>
+	
+	
+	<template id='markerListItem'>
+	<div class='marker'><span class='markerId'>${id} }</span><span class='markerDate'>${datetime.utc()} }</span></div>
+	</template>
+
+</body>
+
+
+</html>

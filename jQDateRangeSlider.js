@@ -42,6 +42,14 @@
 			});
 		},
 
+		_setMarkersParameters: function(){
+			this.markers.markers({
+				min: new Date(this.options.bounds.min.valueOf()),
+				max: new Date(this.options.bounds.max.valueOf()),
+				markers: this.options.markers
+			});
+		},
+
 		_setOption: function(key, value){
 			if ((key === "defaultValues" || key === "bounds") && typeof value !== "undefined" && value !== null && this._isValidDate(value.min) && this._isValidDate(value.max)){
 				$.ui.rangeSlider.prototype._setOption.apply(this, [key, {min:value.min.valueOf(), max:value.max.valueOf()}]);

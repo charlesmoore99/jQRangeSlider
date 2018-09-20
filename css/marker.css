@@ -1,0 +1,79 @@
+/**
+ * Theme for jQRangeSlider
+ * Inspired by http://cssdeck.com/item/381/itunes-10-storage-bar
+ *        and http://cssdeck.com/item/276/pure-css-arrow-with-border-tooltip
+ */
+
+
+.ui-markerSlider .ui-ruler-scale{
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+}
+
+
+.ui-rangeSlider {
+	height: 60px;
+}
+
+.ui-rangeSlider-container, .ui-rangeSlider-arrow {
+	height: 60px;
+}
+
+.ui-rangeSlider-bar {
+	background: #68a1d6aa;
+	height: 59px;
+}
+
+.ui-rangeSlider-handle {
+	width: 10px;
+	height: 60px;
+}
+
+.ui-rangeSlider .ui-ruler-scale0 .ui-ruler-tick-inner {
+	color: white;
+	margin-top: 1px;
+	border-left: 1px solid white;
+	height: 59px;
+	padding-left: 2px;
+	position: relative;
+}
+
+.ui-rangeSlider-label {
+	padding: 5px 10px;
+	bottom: 60px;
+	color: white;
+	font-size: 15px;
+	cursor: col-resize;
+}
+
+.ui-rangeSlider .ui-markers-line{
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+}
+
+.ui-rangeSlider .ui-markers-mark-container { 
+  position:absolute;
+  top: 40%; 
+  z-index : 10;
+}
+
+.ui-rangeSlider .ui-markers-mark { 
+  position:relative;
+  background-image: url("icons-markers/marker.png");
+  left : -8px;
+  height : 16px;
+  width : 16px;
+  z-index : 10;
+}
+
+.ui-rangeSlider .ui-ruler-scale0 .ui-ruler-tick-label {
+    position: absolute;
+    top: 0px;
+}
+
